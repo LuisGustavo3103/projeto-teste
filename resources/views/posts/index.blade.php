@@ -16,7 +16,7 @@
     <div class="flex justify-between items-center py-3 my-3">
         <div>
             <h1 class="text-3xl ">
-                Bem vindo, {{ auth()->user()->name }}!
+                Bem vindo, {{ auth()->user()->name }}!!
             </h1>
             <form action="{{ route('users.logout') }}" method="POST">
                 @csrf
