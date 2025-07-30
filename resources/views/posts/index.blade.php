@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -51,7 +52,7 @@
                     <form action="{{ route('posts.delete', $post) }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button type="submit"
+                        <button onclick="return confirm('Deseja realmente excluir?')" type="submit"
                             class="bg-red-500 p-2 rounded text-white hover:bg-red-400 cursor-pointer">Excluir</button>
                     </form>
                 @endif
