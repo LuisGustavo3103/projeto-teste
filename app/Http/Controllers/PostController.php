@@ -5,14 +5,26 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::orderByDesc('created_at')->get();
+        $searchTitle = $request->input('title');
+        $searchDescription = $request->input('description');
+
+        $posts = Post::query()
+            ->when($searchTitle, function ($query) use ($searchTitle) {
+                $query->where('title', 'like', '%' . $searchTitle . '%');
+            })
+            ->when($searchDescription, function ($query) use ($searchDescription) {
+                $query->where('description', 'like', '%' . $searchDescription . '%');
+            })
+            ->orderByDesc('created_at')
+            ->paginate(5);
 
         return view('posts.index', [
             'posts' => $posts,
