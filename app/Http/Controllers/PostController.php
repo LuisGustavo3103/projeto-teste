@@ -64,4 +64,33 @@ class PostController extends Controller
         return redirect()->route('posts.index')
             ->with('success', 'Post criado com sucesso!');
     }
+
+    public function edit(Post $post)
+    {
+        abort_if($post->user_id !== auth()->user()->id, 403);
+
+        return view('posts.edit', [
+            'post' => $post
+        ]);
+    }
+
+    public function update(Post $post, PostRequest $request)
+    {
+        $incomingFields = $request->validated();
+
+        try {
+            $post->update([
+                'title' => data_get($incomingFields, 'title'),
+                'description' => data_get($incomingFields, 'description'),
+                'user_id' => auth()->user()->id,
+            ]);
+        } catch (Exception $exception) {
+            Log::error($exception);
+
+            response()->json('Erro inesperado', 500);
+        }
+
+        return redirect()->route('posts.index')
+            ->with('success', 'Post editado com sucesso!');
+    }
 }

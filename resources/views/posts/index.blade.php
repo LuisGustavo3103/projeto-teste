@@ -79,12 +79,18 @@
 
                         </div>
                         @if ($post->user_id === auth()->user()->id)
-                            <form action="{{ route('posts.delete', $post) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button onclick="return confirm('Deseja realmente excluir?')" type="submit"
-                                    class="bg-red-500 p-2 rounded text-white hover:bg-red-400 cursor-pointer">Excluir</button>
-                            </form>
+                            <div class="flex gap-2">
+                                <a href="{{ route('posts.edit', $post) }}">
+                                    <button type="button"
+                                        class="bg-yellow-500 text-white p-2 hover:bg-yellow-400 rounded cursor-pointer">Editar</button>
+                                </a>
+                                <form action="{{ route('posts.delete', $post) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button onclick="return confirm('Deseja realmente excluir?')" type="submit"
+                                        class="bg-red-500 p-2 rounded text-white hover:bg-red-400 cursor-pointer">Excluir</button>
+                                </form>
+                            </div>
                         @endif
                     </div>
                 @empty
