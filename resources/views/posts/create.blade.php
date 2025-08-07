@@ -30,12 +30,13 @@
             <h1 class="text-3xl text-center">Criar novo post</h1>
         </div>
         <div class="bg-white p-2 ">
-            <form class="grid" action="{{ route('posts.store') }}" method="POST">
+            <form class="grid" action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input class="border rounded p-1 m-2 " name="title" field="title" type="text" placeholder="Titulo"
                     autofocus required>
                 <textarea class="border rounded p-1 block  m-2" placeholder="Descrição" name="description" id="description"
                     cols="30" rows="10" required></textarea>
+                <input class="border rounded p-1 m-2" type="file" accept=".png, .jpg, .jpeg" name="image">
                 <div class="flex justify-end ">
                     <a href="{{ route('posts.index') }}">
                         <button type="button"
@@ -46,8 +47,10 @@
                     <button type="submit"
                         class="bg-green-500 p-2 rounded text-white hover:bg-green-400 cursor-pointer m-2">Salvar</button>
                 </div>
+                @error('image')
+                    <div class="text-red-500">{{ $message }}</div>
+                @enderror
             </form>
-
         </div>
     </div>
 </body>

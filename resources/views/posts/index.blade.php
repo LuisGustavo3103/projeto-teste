@@ -60,23 +60,27 @@
 
                 </form>
             </div>
-            <div class="p-2">
+            <div class="p-2 grid grid-cols-3 gap-4">
                 @forelse ($posts as $post)
-                    <div class="h-min my-2 border rounded bg-gray-200 p-2 flex justify-between items-center">
+                    <div class="border">
                         <div>
-                            <p>
-                                {{ $post->title }}
-                            </p>
-                            <small>
-                                {{ $post->description }}
-                            </small>
-                            <div class="flex gap-x-3">
+                            @if ($post->image)
+                                <img class="rounded" src="{{ Storage::url($post->image) }}" alt="">
+                            @endif
+                            <div>
                                 <p>
-                                    Criado por: {{ $post->user->name }}
+                                    {{ $post->title }}
                                 </p>
-                                <p>Criado em: {{ $post->created_at->format('d/m/Y H:i') }} </p>
+                                <small>
+                                    {{ $post->description }}
+                                </small>
+                                <div class="flex gap-x-3">
+                                    <p>
+                                        Criado por: {{ $post->user->name }}
+                                    </p>
+                                    <p>Criado em: {{ $post->created_at->format('d/m/Y H:i') }} </p>
+                                </div>
                             </div>
-
                         </div>
                         @if ($post->user_id === auth()->user()->id)
                             <div class="flex gap-2">

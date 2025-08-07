@@ -7,7 +7,7 @@ use App\Models\Post;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -24,7 +24,7 @@ class PostController extends Controller
                 $query->where('description', 'like', '%' . $searchDescription . '%');
             })
             ->orderByDesc('created_at')
-            ->paginate(5);
+            ->paginate(6);
 
         return view('posts.index', [
             'posts' => $posts,
@@ -34,6 +34,9 @@ class PostController extends Controller
     public function delete(Post $post)
     {
         if ($post->user_id === auth()->user()->id) {
+            if ($post->image) {
+                Storage::delete($post->image);
+            };
             $post->delete();
         }
 
@@ -47,6 +50,8 @@ class PostController extends Controller
 
     public function store(PostRequest $request)
     {
+        $filePath = Storage::disk('public')->put('posts', $request->file('image'));
+
         $incomingFields = $request->validated();
 
         try {
@@ -54,11 +59,10 @@ class PostController extends Controller
                 'title' => data_get($incomingFields, 'title'),
                 'description' => data_get($incomingFields, 'description'),
                 'user_id' => auth()->user()->id,
+                'image' => $filePath,
             ]);
         } catch (Exception $exception) {
             Log::error($exception);
-
-            response()->json('Erro inesperado', 500);
         }
 
         return redirect()->route('posts.index')
@@ -79,15 +83,26 @@ class PostController extends Controller
         $incomingFields = $request->validated();
 
         try {
+            $filePath = null;
+
+            if ($request->file('image')) {
+                if ($post->image) {
+                    Storage::delete($post->image);
+                };
+
+                $filePath = Storage::disk('public')->put('posts', $request->file('image'));
+            }
+
             $post->update([
                 'title' => data_get($incomingFields, 'title'),
                 'description' => data_get($incomingFields, 'description'),
                 'user_id' => auth()->user()->id,
+                'image' => $filePath,
             ]);
         } catch (Exception $exception) {
             Log::error($exception);
-
-            response()->json('Erro inesperado', 500);
+            return redirect()->route('posts.edit')
+                ->with('error', 'Erro ao editar o post!');
         }
 
         return redirect()->route('posts.index')
